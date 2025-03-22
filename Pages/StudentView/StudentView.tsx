@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import "./SeatingView.css";
 
 
- function SeatingView() {
+ export default function StudentView() {
 
   return (
     <div className="cig">
