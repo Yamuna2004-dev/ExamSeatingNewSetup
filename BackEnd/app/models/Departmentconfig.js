@@ -16,7 +16,7 @@ const Departmentconfig = sequelize.define('departmentconfig', {
   	},
 	{
 		indexes: [
-			// Create a unique index on email
+			// Create a unique index on dep
 			{
 				unique: true,
 				fields: ['depid']
