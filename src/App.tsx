@@ -8,6 +8,8 @@ import AppErrorBoundaryFallback from '@/error-handling/fallbacks/App';
 
 import Signin from '../Pages/Signin';
 import Signup from '../Pages/Signup';
+// import StudentSchedule from '../Pages/StudentSchedule';
+// import StudentView from '../Pages/StudentView';
 import Pages from './routes/Pages';
 import Header from './sections/Header';
 import HotKeys from './sections/HotKeys';
@@ -35,6 +37,8 @@ function AppRouter() {
         <Routes>
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          {/* <Route path="/studentschedule" element={< StudentSchedule/>} />
+          <Route path="/studentview" element={<StudentView/>} /> */}
         </Routes>
       ) : (
         <>

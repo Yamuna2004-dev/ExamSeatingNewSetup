@@ -1,0 +1,110 @@
+.container {
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Times New Roman';
+    color: #214982;
+    box-sizing: border-box;
+    padding: 5px;
+}
+.UserInputArea {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #9ecdf6;
+    width: 600px;
+    margin: auto;
+    height: 380px;
+  }
+    
+.text{
+    background-color: bisque;
+}
+
+/* Heading style */
+.heading {
+
+    font-size: 44px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: Georgia;
+    color: #2f3c4e;
+    margin: 20px;
+    text-align: center;
+    text-decoration: underline;
+}
+
+/* "Enter Your Register Number" label */
+.register-container {
+    margin-top: 10px;
+    gap: 10px;
+    
+}
+.form-label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+.register-heading {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Flex container for the form */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Each row (label + input) */
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Label style */
+.form-label {
+    font-size: 16px;
+    font-weight: bold;
+    width: 150px;
+    /* Adjust width to align all labels */
+    text-align: right;
+}
+
+/* Search Button */
+button {
+    height: 55px;
+}
+.clg
+ {
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+ }
+ .title1 {
+    color: navy; 
+    font-size: 28px; /* Adjust size as needed */
+    font-weight: bold; /* Make it stand out */
+    text-align: center; /* Center the text */
+    text-transform: uppercase; /* Make text uppercase for a formal look */
+    margin-bottom: 10px; /* Add spacing below */
+    font-family: "Times New Roman", serif; /* Formal font style */
+  }
+  .title2 {
+    color: #003366; /* Slightly darker navy blue */
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: "Arial", sans-serif;
+  }
+    

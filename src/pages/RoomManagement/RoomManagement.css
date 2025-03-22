@@ -1,0 +1,70 @@
+.room-management {
+    text-align: center;
+    padding: 20px;
+    background-color: #c4e4f4;
+  }
+  
+  .college-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #34495e;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .action-buttons {
+    margin-bottom: 15px;
+  }
+  
+  .error-message {
+    color: #d32f2f !important;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .room-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+  
+  .table-header {
+    background-color: #2c3e50 !important;
+    color: white;
+  }
+  
+  .table-row:nth-child(even) {
+    background-color: #ecf0f1;
+  }
+  
+  .table-row:hover {
+    background-color: #d5dbdb;
+  }
+  
+  .add-room-form {
+    margin-top: 20px;
+  }
+  
+  .input-field {
+    width: 180px;
+  }
+  
+  .add-room-button {
+    background-color: #27ae60 !important;
+    color: white;
+  }
+  
+  .add-room-button:hover {
+    background-color: #1e8449 !important;
+  }
+  

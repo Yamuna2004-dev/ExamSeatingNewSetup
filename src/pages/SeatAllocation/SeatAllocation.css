@@ -1,0 +1,81 @@
+
+.SeatAllocation {
+  width: 80%;
+}
+
+.Heading {
+  font-size: 44px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: Georgia;
+  color: #2e3c50;
+  margin: auto;
+  text-align: center;
+
+}
+
+.UserInputArea {
+  background-color: #9ecdf6;
+  box-sizing: border-box;
+  width: 950px;
+  height: 300px;
+  margin: auto;
+
+}
+
+p {
+  color: #021632;
+  font-size: 14px;
+
+
+}
+
+.Option {
+  display: flex;
+  align-items: flex-start;
+  width: 50%;
+  margin: 30px;
+
+}
+
+
+
+.SubTopic {
+  align-items: center;
+  width: 30%;
+  display: grid;
+  height: 100%;
+}
+
+.userArea {
+  width: 70%;
+
+}
+
+.Flex {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.Action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.SeatAllocation {
+  box-sizing: border-box;
+  padding: 2px;
+  margin: auto;
+}
+.MuiAutocomplete-listbox {
+  background-color: #D6E4F0; 
+}
+
+/* Set background color for each option */
+.MuiAutocomplete-option {
+  background-color: #D6E4F0; 
+}
