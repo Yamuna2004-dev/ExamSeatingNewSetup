@@ -1,62 +1,63 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
-const SeatingReport = sequelize.define('SeatingReport', {
-    std_name: {
+const Report = sequelize.define('Report', {
+    stdname: {
         type: DataTypes.STRING(30),
         allowNull: false
     },
-    std_reg: {
+    stdreg: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        primaryKey: true, // Primary Key
+        primaryKey: true, // Primary Key  
         unique: true
     },
     subject: {
         type: DataTypes.STRING(40),
         allowNull: false
     },
-    sub_code: {
+    subcode: {
         type: DataTypes.STRING(10),
         allowNull: false,
         unique: true
     },
-    room_no: {
+    roomno: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    seat_no: {
+    seatno: {
         type: DataTypes.STRING(10),
         allowNull: false
     },
-    dep_name: {
+    depname: {
         type: DataTypes.STRING(40),
         allowNull: false
     },
-    dep_id: {
+    depid: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        references: {
-            model: 'departments', // Foreign Key
-            key: 'dep_id'
-        }
+        // references: {
+        //     model: 'departments', // Foreign Key
+        //     key: 'dep_id'
+        // }
     },
     year: {
         type: DataTypes.INTEGER,
         allowNull: false,
         unique: true
     }
-}, {
-    tableName: 'seating_report',
-    timestamps: false, // No createdAt and updatedAt fields
+}, 
+{
+//     tableName: 'seating_report',
+//     timestamps: false, // No createdAt and updatedAt fields
     indexes: [
         {
             unique: false,
-            fields: ['dep_id'] // Index for department ID
+            fields: ['depid'] // Index for department ID
         },
         {
             unique: false,
-            fields: ['room_no'] // Index for room number for faster lookup
+            fields: ['roomno'] // Index for room number for faster lookup
         },
         {
             unique: false,
@@ -65,4 +66,4 @@ const SeatingReport = sequelize.define('SeatingReport', {
     ]
 });
 
-module.exports = SeatingReport;
+module.exports = Report;

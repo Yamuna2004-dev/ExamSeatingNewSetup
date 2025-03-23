@@ -26,6 +26,5 @@ const Cheifexaminer = sequelize.define('Cheifexaminer', {
             fields: ['id']
         }],
 });
-    
 
 module.exports = Cheifexaminer;

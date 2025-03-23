@@ -8,8 +8,8 @@ const Departmentconfig = sequelize.define('departmentconfig', {
 			allowNull: false,
 			primaryKey: true
 		},
-		depname: DataTypes.STRING,
-		depid: {
+		
+		depname: {
 			type: DataTypes.STRING,
 			allowNull: false
 		}

@@ -9,6 +9,10 @@ const session = require('express-session');
 const expressHbs = require('express-handlebars');
 const SequelizeStore = require("connect-session-sequelize")(session.Store); // initalize sequelize with session store
 const Departmentconfig = require("./app/models/Departmentconfig");
+const Examschedule = require("./app/models/Examschedule");
+const Report = require("./app/models/Report");
+const Cheifexaminer = require("./app/models/Cheifexaminer");
+const Student = require("./app/models/Student");
 
 const app = express();
 const csrfProtection = csrf();

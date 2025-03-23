@@ -1,3 +1,4 @@
+import HomeIcon from '@mui/icons-material/Home';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
@@ -9,11 +10,13 @@ import { Routes } from './types';
 
 const routes: Routes = [
   {
-    component: asyncComponentLoader(() => import('@/pages/ExamSchedule')),
+    component: asyncComponentLoader(() => import('@/pages/WelcomePage')),
     path: '/',
-    title: 'Exam Schedule',
-    icon: PendingActionsIcon,
+    title: 'Home',
+    icon: HomeIcon, // Welcome Page
   },
+  
+  
   {
     component: asyncComponentLoader(() => import('@/pages/RoomManagement')),
     path: '/roommanagement',
@@ -31,6 +34,12 @@ const routes: Routes = [
     path: '/departmentconfig',
     title: 'Department Config',
     icon: SchoolIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/ExamSchedule')),
+    path: '/ExamSchedule',
+    title: 'Exam Schedule',
+    icon: PendingActionsIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/NotFound')),

@@ -1,16 +1,17 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
-const ExamSchedule = sequelize.define('ExamSchedule', {
-    dep_id: {
+const Examschedule = sequelize.define('Examschedule', {
+    
+    depid: {
         type: DataTypes.STRING(10),
         allowNull: false,
         references: {
-            model: 'departments', // Foreign Key: References Department Table
+            model: 'departments', // Foreign Key: References Dep Table
             key: 'dep_id'
         }
     },
-    sub_name: {
+    subname: {
         type: DataTypes.STRING(50),
         allowNull: false,
         primaryKey: true, // Primary Key
@@ -28,7 +29,7 @@ const ExamSchedule = sequelize.define('ExamSchedule', {
         type: DataTypes.STRING(10),
         allowNull: false
     },
-    sub_code: {
+    subcode: {
         type: DataTypes.STRING(10),
         allowNull: false,
         unique: true
@@ -46,18 +47,18 @@ const ExamSchedule = sequelize.define('ExamSchedule', {
     // // Disable createdAt and updatedAt
     indexes: [
         {
-            unique: false,
-            fields: ['dep_id'] // Index for faster queries on department ID
+            unique: true,
+            fields: ['depid'] // Index for faster queries on dep_ID
         },
         {
-            unique: false,
+            unique: true,
             fields: ['semester'] // Index to optimize semester-based queries
         },
         {
-            unique: false,
-            fields: ['year'] // Index for filtering by academic year
+            unique: true,
+            fields: ['year'] // Index for filtering by year
         }
     ]
 });
 
-module.exports = ExamSchedule;
+module.exports = Examschedule;
