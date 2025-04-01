@@ -2,14 +2,14 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
 const Departmentconfig = sequelize.define('departmentconfig', {
-		id: {
+		dep_id: {
 			type: DataTypes.INTEGER,
 			autoIncrement: true,
 			allowNull: false,
 			primaryKey: true
 		},
 		
-		depname: {
+		dep_name: {
 			type: DataTypes.STRING,
 			allowNull: false
 		}

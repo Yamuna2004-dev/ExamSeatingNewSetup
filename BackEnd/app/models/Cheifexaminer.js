@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
-const Cheifexaminer = sequelize.define('Cheifexaminer', {
+const ChiefExaminer = sequelize.define('chiefexaminers', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -10,21 +10,20 @@ const Cheifexaminer = sequelize.define('Cheifexaminer', {
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    
-  },
-{
+    }
+}, {
     indexes: [
-        // Create a unique index on email
         {
             unique: true,
-            fields: ['id']
-        }],
+            fields: ['email']
+        }
+    ]
 });
 
-module.exports = Cheifexaminer;
+module.exports = ChiefExaminer;
