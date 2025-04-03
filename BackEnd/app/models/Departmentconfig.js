@@ -19,7 +19,7 @@ const Departmentconfig = sequelize.define('departmentconfig', {
 			// Create a unique index on dep
 			{
 				unique: true,
-				fields: ['depid']
+				fields: ['dep_id']
 			}],
 	});
 
