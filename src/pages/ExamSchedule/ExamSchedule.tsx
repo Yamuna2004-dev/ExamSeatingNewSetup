@@ -103,6 +103,15 @@ function ExamSchedule() {
       const sheet = workbook.Sheets[sheetName];
       const json: any[] = XLSX.utils.sheet_to_json(sheet);
 
+      const requiredHeaders = ["Year", "Department", "Date", "Subject Title", "Subject Code", "Session"];
+      const firstRow = json[0];
+
+      const missingHeaders = requiredHeaders.filter(header => !(header in firstRow));
+      if (missingHeaders.length > 0) {
+        alert(`Missing required columns: ${missingHeaders.join(", ")}`);
+        return;
+      }
+
       const importedRows: ExamRow[] = json.map(row => ({
         year: row["Year"] || "",
         department: row["Department"] || "",
@@ -114,6 +123,8 @@ function ExamSchedule() {
 
       setRows([...rows, ...importedRows]);
       setErrors([...errors, ...Array(importedRows.length).fill({})]);
+
+      alert("File imported successfully!");
     };
     reader.readAsArrayBuffer(file);
   };

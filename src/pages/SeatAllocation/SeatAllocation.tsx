@@ -6,8 +6,8 @@ import { Typography, Pagination } from "@mui/material";
 import "./SeatAllocation.css";
 
 function Page2() {
-  // Define department options
   const departments = ["BBA", "BCA", "BCom", "B.Sc", "BA"];
+
   const sampleSeats = [
     [
       { seat: "A1", regNo: "Reg:22CA0259" }, { seat: "B1", regNo: "Reg:22CA0259" },
@@ -36,12 +36,15 @@ function Page2() {
     ]
   ];
 
-  const TOTAL_ROOMS = 15; // Total number of rooms
+  const TOTAL_ROOMS = 15;
   const [roomNumber, setRoomNumber] = useState<number>(1);
   const [animationClass, setAnimationClass] = useState<string>("");
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [benchCapacity, setBenchCapacity] = useState<string>("");
+  const [numBenches, setNumBenches] = useState<string>("");
+  const [numHalls, setNumHalls] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  // Handle Room Change with Swipe Effect
   const handleRoomChange = (newRoom: number) => {
     if (newRoom > roomNumber) {
       setAnimationClass("swipe-right");
@@ -51,7 +54,25 @@ function Page2() {
     setTimeout(() => {
       setRoomNumber(newRoom);
       setAnimationClass("");
-    }, 300); // Match transition duration
+    }, 300);
+  };
+
+  const handleGenerate = () => {
+    const benchCap = parseInt(benchCapacity);
+    const benches = parseInt(numBenches);
+    const halls = parseInt(numHalls);
+
+    if (isNaN(benchCap) || benchCap !== 2) {
+      setError("Bench capacity must be exactly 2.");
+      return;
+    }
+    if (benches < 0 || halls < 0) {
+      setError("Benches and halls must be non-negative numbers.");
+      return;
+    }
+
+    setError("");
+    // Additional logic to generate seating can go here
   };
 
   return (
@@ -82,7 +103,13 @@ function Page2() {
               <p className="LabelArea">Bench Capacity</p>
             </div>
             <div className="UserArea">
-              <TextField id="bench-capacity" type="number" variant="filled" />
+              <TextField
+                id="bench-capacity"
+                type="number"
+                variant="filled"
+                value={benchCapacity}
+                onChange={(e) => setBenchCapacity(e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -92,7 +119,13 @@ function Page2() {
               <p className="LabelArea">No. of Benches</p>
             </div>
             <div className="UserArea">
-              <TextField id="num-benches" type="number" variant="filled" />
+              <TextField
+                id="num-benches"
+                type="number"
+                variant="filled"
+                value={numBenches}
+                onChange={(e) => setNumBenches(e.target.value)}
+              />
             </div>
           </div>
           <div className="Option">
@@ -100,22 +133,27 @@ function Page2() {
               <p className="LabelArea">No. of Halls</p>
             </div>
             <div className="UserArea">
-              <TextField id="num-halls" type="number" variant="filled" />
+              <TextField
+                id="num-halls"
+                type="number"
+                variant="filled"
+                value={numHalls}
+                onChange={(e) => setNumHalls(e.target.value)}
+              />
             </div>
           </div>
         </div>
+        {error && <p className="error-message">{error}</p>}
         <div className="Action">
-          <Button variant="contained">Generate Seating</Button>
+          <Button variant="contained" onClick={handleGenerate}>Generate Seating</Button>
         </div>
       </div>
 
-      {/* Report Section */}
       <div className="report-container">
         <Typography className="report-heading">
           Room {roomNumber} - Seating Arrangement
         </Typography>
 
-        {/* Seat Grid Layout with Swipe Effect */}
         <div className={`seat-grid ${animationClass}`}>
           {sampleSeats.map((row, rowIndex) => (
             <div key={rowIndex} className="seat-row">
@@ -140,7 +178,6 @@ function Page2() {
           ))}
         </div>
 
-        {/* Pagination Controls */}
         <div className="pagination-container">
           <Pagination
             count={TOTAL_ROOMS}

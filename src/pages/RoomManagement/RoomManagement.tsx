@@ -1,47 +1,74 @@
 import React, { useState } from "react";
-import { 
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
-  TextField, Button, Box, Typography, Stack, IconButton, Alert 
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+  TextField, Button, Box, Typography, Stack, IconButton, Alert
 } from "@mui/material";
 import { Download, Delete } from "@mui/icons-material";
 import "./RoomManagement.css";
 
-const defaultRooms = Array.from({ length: 15 }, (_, index) => ({
+interface Room {
+  roomNumber: number;
+  floorNumber: string;
+  seats: number;
+}
+
+const defaultRooms: Room[] = Array.from({ length: 15 }, (_, index) => ({
   roomNumber: index + 1,
   floorNumber: index < 5 ? "Ground Floor" : index < 10 ? "First Floor" : "Second Floor",
   seats: 30,
 }));
 
 function RoomManagement() {
-  const [rooms, setRooms] = useState(defaultRooms);
-  const [roomData, setRoomData] = useState({ roomNumber: "", floorNumber: "", seats: "" });
-  const [error, setError] = useState("");
+  const [rooms, setRooms] = useState<Room[]>(defaultRooms);
+  const [roomData, setRoomData] = useState<{ roomNumber: string; floorNumber: string; seats: string }>({
+    roomNumber: "",
+    floorNumber: "",
+    seats: ""
+  });
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoomData({ ...roomData, [e.target.name]: e.target.value });
   };
 
-  const handleAddRoom = () => {
-    const roomExists = rooms.some((room) => room.roomNumber === parseInt(roomData.roomNumber));
+  const isPositiveNumber = (value: string): boolean => {
+    const number = Number(value);
+    return !isNaN(number) && Number.isInteger(number) && number > 0;
+  };
 
-    if (!roomData.roomNumber || !roomData.floorNumber || !roomData.seats) {
+  const handleAddRoom = () => {
+    const { roomNumber, floorNumber, seats } = roomData;
+
+    if (!roomNumber || !floorNumber || !seats) {
       setError("All fields are required.");
       return;
     }
 
-    if (roomExists) {
-      setError(`Room ${roomData.roomNumber} on ${roomData.floorNumber} already exists.`);
+    if (!isPositiveNumber(roomNumber)) {
+      setError("Room Number must be a positive integer.");
       return;
     }
 
-    const newRooms = [...rooms, { 
-      ...roomData, 
-      roomNumber: parseInt(roomData.roomNumber), 
-      seats: parseInt(roomData.seats) 
-    }];
-    newRooms.sort((a, b) => a.roomNumber - b.roomNumber);
-    
-    setRooms(newRooms);
+    if (!isPositiveNumber(seats)) {
+      setError("Seats must be a positive integer.");
+      return;
+    }
+
+    const roomExists = rooms.some((room) => room.roomNumber === parseInt(roomNumber));
+
+    if (roomExists) {
+      setError(`Room ${roomNumber} on ${floorNumber} already exists.`);
+      return;
+    }
+
+    const newRoom: Room = {
+      roomNumber: parseInt(roomNumber),
+      floorNumber: floorNumber,
+      seats: parseInt(seats)
+    };
+
+    const updatedRooms = [...rooms, newRoom].sort((a, b) => a.roomNumber - b.roomNumber);
+    setRooms(updatedRooms);
     setRoomData({ roomNumber: "", floorNumber: "", seats: "" });
     setError("");
   };
@@ -52,9 +79,9 @@ function RoomManagement() {
   };
 
   const handleDownload = () => {
-    const csvContent = "Room Number,Floor Number,Seats\n" + 
+    const csvContent = "Room Number,Floor Number,Seats\n" +
       rooms.map((r) => `${r.roomNumber},${r.floorNumber},${r.seats}`).join("\n");
-    
+
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -112,34 +139,36 @@ function RoomManagement() {
         Add New Room
       </Typography>
       <Stack direction="row" spacing={2} justifyContent="center" className="add-room-form">
-        <TextField 
-          label="Room Number" 
-          name="roomNumber" 
-          value={roomData.roomNumber} 
-          onChange={handleChange} 
-          variant="outlined" 
-          className="input-field" 
+        <TextField
+          label="Room Number"
+          name="roomNumber"
+          value={roomData.roomNumber}
+          onChange={handleChange}
+          variant="outlined"
+          className="input-field"
+          type="number"
         />
-        <TextField 
-          label="Floor Number" 
-          name="floorNumber" 
-          value={roomData.floorNumber} 
-          onChange={handleChange} 
-          variant="outlined" 
-          className="input-field" 
+        <TextField
+          label="Floor Number"
+          name="floorNumber"
+          value={roomData.floorNumber}
+          onChange={handleChange}
+          variant="outlined"
+          className="input-field"
         />
-        <TextField 
-          label="Seats" 
-          name="seats" 
-          value={roomData.seats} 
-          onChange={handleChange} 
-          variant="outlined" 
-          className="input-field" 
+        <TextField
+          label="Seats"
+          name="seats"
+          value={roomData.seats}
+          onChange={handleChange}
+          variant="outlined"
+          className="input-field"
+          type="number"
         />
-        <Button 
-          variant="contained" 
-          color="success" 
-          onClick={handleAddRoom} 
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleAddRoom}
           className="add-room-button"
         >
           Add Room
