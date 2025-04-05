@@ -21,31 +21,51 @@ function Page3() {
   const [error, setError] = useState("");
 
   const handleAddDepartment = () => {
-    if (!newDepartmentId.trim() || !newDepartmentName.trim()) {
+    const trimmedId = newDepartmentId.trim();
+    const trimmedName = newDepartmentName.trim();
+
+    // Validation 1: Empty Fields
+    if (!trimmedId || !trimmedName) {
       setError("Both Department ID and Name are required.");
       return;
     }
 
-    const idExists = departments.some(dept => dept.id === parseInt(newDepartmentId));
+    // Validation 2: ID must be a number
+    const parsedId = parseInt(trimmedId);
+    if (isNaN(parsedId)) {
+      setError("Department ID must be a valid number.");
+      return;
+    }
+
+    if (parsedId <= 0) {
+      setError("Department ID must be greater than 0.");
+      return;
+    }
+
+    // Validation 3: Duplicate ID
+    const idExists = departments.some((dept) => dept.id === parsedId);
     if (idExists) {
       setError("This Department ID already exists.");
       return;
     }
 
-    const nameExists = departments.some(dept => dept.name.toLowerCase() === newDepartmentName.toLowerCase());
+    // Validation 4: Duplicate Name
+    const nameExists = departments.some(
+      (dept) => dept.name.toLowerCase() === trimmedName.toLowerCase()
+    );
     if (nameExists) {
       setError("This Department Name already exists.");
       return;
     }
 
-    const newDept = { id: parseInt(newDepartmentId), name: newDepartmentName };
+    // If all checks pass
+    const newDept = { id: parsedId, name: trimmedName };
     setDepartments([...departments, newDept]);
-    setNewDepartmentName("");
     setNewDepartmentId("");
+    setNewDepartmentName("");
     setError("");
   };
 
-  
   const handleDeleteDepartment = (id: number) => {
     const updatedDepartments = departments.filter(dept => dept.id !== id);
     setDepartments(updatedDepartments);

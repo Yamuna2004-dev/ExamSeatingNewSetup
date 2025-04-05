@@ -36,10 +36,10 @@ const Report = sequelize.define('Report', {
     depid: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        // references: {
-        //     model: 'departments', // Foreign Key
-        //     key: 'dep_id'
-        // }
+        references: {
+            model: 'departments', // Foreign Key
+            key: 'dep_id'
+        }
     },
     year: {
         type: DataTypes.INTEGER,

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,19 +10,50 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box"; // Import Box for the sx prop
+import Box from "@mui/material/Box";
 import { useNavigate } from 'react-router-dom';
 
-const Signin = () => {
-
+const Signin: React.FC = () => {
   const navigate = useNavigate();
+
+  // State hooks for inputs and error message
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  // Form submit handler with type annotation
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Enter a valid email address.");
+      return;
+    }
+
+    // Dummy credentials check – replace with real authentication
+    if (email !== "admin@example.com" || password !== "admin123") {
+      setErrorMessage("Invalid email or password.");
+      return;
+    }
+
+    // Clear error and redirect on success
+    setErrorMessage('');
+    navigate('/');
+  };
+
   return (
     <Grid
       container
       component="main"
       sx={{
         height: "100vh",
-        justifyContent:"center"
+        justifyContent: "center"
       }}
     >
       <CssBaseline />
@@ -50,7 +82,7 @@ const Signin = () => {
           flexDirection: "column",
           alignItems: "center",
           margin: 8,
-          padding:5
+          padding: 5
         }}
       >
         <Avatar
@@ -64,14 +96,12 @@ const Signin = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        {/* Wrap the form in a Box to use sx */}
+
         <Box
           component="form"
-          sx={{
-            width: "100%", // Fix IE 11 issue.
-            marginTop: 1,
-          }}
+          sx={{ width: "100%", marginTop: 1 }}
           noValidate
+          onSubmit={handleSubmit}
         >
           <TextField
             variant="outlined"
@@ -84,6 +114,8 @@ const Signin = () => {
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -95,20 +127,26 @@ const Signin = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
+
+          {errorMessage && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {errorMessage}
+            </Typography>
+          )}
+
           <Button
-          onClick={() => {navigate('/');}}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            sx={{
-              margin: "24px 0 16px",
-            }}
+            sx={{ margin: "24px 0 16px" }}
           >
             Sign In
           </Button>
