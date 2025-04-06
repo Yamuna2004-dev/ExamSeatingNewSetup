@@ -6,7 +6,13 @@ import {
 import { Delete } from "@mui/icons-material";
 import "./DepartmentConfig.css";
 
-const defaultDepartments = [
+// Define the department type
+interface Department {
+  id: number;
+  name: string;
+}
+
+const defaultDepartments: Department[] = [
   { id: 1, name: "BCA" },
   { id: 2, name: "BBA (Tourism)" },
   { id: 3, name: "B.Com (General)" },
@@ -15,22 +21,20 @@ const defaultDepartments = [
 ];
 
 function Page3() {
-  const [departments, setDepartments] = useState<{ id: number; name: string }[]>(defaultDepartments);
-  const [newDepartmentName, setNewDepartmentName] = useState("");
-  const [newDepartmentId, setNewDepartmentId] = useState("");
-  const [error, setError] = useState("");
+  const [departments, setDepartments] = useState<Department[]>(defaultDepartments);
+  const [newDepartmentName, setNewDepartmentName] = useState<string>("");
+  const [newDepartmentId, setNewDepartmentId] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const handleAddDepartment = () => {
     const trimmedId = newDepartmentId.trim();
     const trimmedName = newDepartmentName.trim();
 
-    // Validation 1: Empty Fields
     if (!trimmedId || !trimmedName) {
       setError("Both Department ID and Name are required.");
       return;
     }
 
-    // Validation 2: ID must be a number
     const parsedId = parseInt(trimmedId);
     if (isNaN(parsedId)) {
       setError("Department ID must be a valid number.");
@@ -42,14 +46,12 @@ function Page3() {
       return;
     }
 
-    // Validation 3: Duplicate ID
     const idExists = departments.some((dept) => dept.id === parsedId);
     if (idExists) {
       setError("This Department ID already exists.");
       return;
     }
 
-    // Validation 4: Duplicate Name
     const nameExists = departments.some(
       (dept) => dept.name.toLowerCase() === trimmedName.toLowerCase()
     );
@@ -58,8 +60,7 @@ function Page3() {
       return;
     }
 
-    // If all checks pass
-    const newDept = { id: parsedId, name: trimmedName };
+    const newDept: Department = { id: parsedId, name: trimmedName };
     setDepartments([...departments, newDept]);
     setNewDepartmentId("");
     setNewDepartmentName("");

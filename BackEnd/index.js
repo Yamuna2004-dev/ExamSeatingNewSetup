@@ -18,6 +18,11 @@ const app = express();
 const csrfProtection = csrf();
 const router = express.Router();
 
+//new add
+const departmentRoutes = require('./routes/Departmentconfig');
+app.use("/api/departments", departmentRoutes);
+
+
 //Loading Routes
 const webRoutes = require('./routes/web');
 const sequelize = require('./config/database');
