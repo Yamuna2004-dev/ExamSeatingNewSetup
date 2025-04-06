@@ -2,6 +2,7 @@ const path = require('path');
 // load dependencies
 const env = require('dotenv');
 const csrf = require('csurf');
+const cors = require('cors');
 const express = require('express');
 const flash = require('express-flash');
 const bodyParser = require('body-parser');
@@ -24,6 +25,11 @@ const sequelize = require('./config/database');
 const errorController = require('./app/controllers/ErrorController');
 
 env.config();
+app.use(cors({
+	origin: 'http://localhost:5173', // Replace with your frontend URL
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	credentials: true
+  }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 

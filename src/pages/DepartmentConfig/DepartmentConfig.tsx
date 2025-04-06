@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   TextField, Button, Typography, Stack, IconButton, Alert
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import "./DepartmentConfig.css";
-
-const defaultDepartments = [
-  { id: 1, name: "BCA" },
-  { id: 2, name: "BBA (Tourism)" },
-  { id: 3, name: "B.Com (General)" },
-  { id: 4, name: "BA (Tamil)" },
-  { id: 5, name: "B.Sc (Mathematics)" }
-];
+import axios from "axios";
 
 function Page3() {
-  const [departments, setDepartments] = useState<{ id: number; name: string }[]>(defaultDepartments);
+  const [departments, setDepartments] = useState<{ dep_id: number; dep_name: string }[]>();
   const [newDepartmentName, setNewDepartmentName] = useState("");
   const [newDepartmentId, setNewDepartmentId] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/dept/get").then((res) => {
+      setDepartments(res.data)
+      console.log("res.data",res.data)
+      debugger;
+    }).catch((err) => {
+      console.log("Error",err.message)
+    })
+  }, [])
 
   const handleAddDepartment = () => {
     const trimmedId = newDepartmentId.trim();
@@ -43,15 +46,15 @@ function Page3() {
     }
 
     // Validation 3: Duplicate ID
-    const idExists = departments.some((dept) => dept.id === parsedId);
+    const idExists = departments?.some((dept) => dept.dep_id === parsedId);
     if (idExists) {
       setError("This Department ID already exists.");
       return;
     }
 
     // Validation 4: Duplicate Name
-    const nameExists = departments.some(
-      (dept) => dept.name.toLowerCase() === trimmedName.toLowerCase()
+    const nameExists = departments?.some(
+      (dept) => dept.dep_name.toLowerCase() === trimmedName.toLowerCase()
     );
     if (nameExists) {
       setError("This Department Name already exists.");
@@ -59,15 +62,17 @@ function Page3() {
     }
 
     // If all checks pass
-    const newDept = { id: parsedId, name: trimmedName };
-    setDepartments([...departments, newDept]);
-    setNewDepartmentId("");
-    setNewDepartmentName("");
-    setError("");
+    const newDept = { dep_id: parsedId, dep_name: trimmedName };
+    axios.post("http://localhost:3000/dept/insert",newDept).then(() => {
+      setNewDepartmentId("");
+      setNewDepartmentName("");
+      setError("");
+    })
+
   };
 
-  const handleDeleteDepartment = (id: number) => {
-    const updatedDepartments = departments.filter(dept => dept.id !== id);
+  const handleDeleteDepartment = (dep_id: number) => {
+    const updatedDepartments = departments?.filter(dept => dept.dep_id !== dep_id);
     setDepartments(updatedDepartments);
   };
 
@@ -92,12 +97,12 @@ function Page3() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {departments.map((dept) => (
-              <TableRow key={dept.id} className="table-row">
-                <TableCell>{dept.id}</TableCell>
-                <TableCell>{dept.name}</TableCell>
+            {departments?.map((dept) => (
+              <TableRow key={dept.dep_id} className="table-row">
+                <TableCell>{dept.dep_id}</TableCell>
+                <TableCell>{dept.dep_name}</TableCell>
                 <TableCell>
-                  <IconButton color="error" onClick={() => handleDeleteDepartment(dept.id)}>
+                  <IconButton color="error" onClick={() => handleDeleteDepartment(dept.dep_id)}>
                     <Delete />
                   </IconButton>
                 </TableCell>

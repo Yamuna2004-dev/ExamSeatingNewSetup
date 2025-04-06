@@ -1,3 +1,5 @@
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../../config/database');
 const Report = sequelize.define('Report', {
     stdname: {
         type: DataTypes.STRING(30),
@@ -33,10 +35,10 @@ const Report = sequelize.define('Report', {
     depid: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: 'departmentconfigs', // Table name in DB (Sequelize pluralizes by default)
-            key: 'id'                  // Must match Departmentconfig primary key
-        }
+        // references: {
+        //     model: 'departmentconfigs', // Table name in DB (Sequelize pluralizes by default)
+        //     key: 'id'                  // Must match Departmentconfig primary key
+        // }
     },
     year: {
         type: DataTypes.INTEGER,

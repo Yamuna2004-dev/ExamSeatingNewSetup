@@ -1,3 +1,8 @@
 exports.homePage = (req, res) => {
-	res.render('home');
+	res.send('home');
 };
+
+exports.getdepartmentconfig = (req, res) => {
+	
+	res.send()
+}
