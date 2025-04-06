@@ -39,11 +39,17 @@ function Page2() {
   const TOTAL_ROOMS = 15;
   const [roomNumber, setRoomNumber] = useState<number>(1);
   const [animationClass, setAnimationClass] = useState<string>("");
+
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [benchCapacity, setBenchCapacity] = useState<string>("");
   const [numBenches, setNumBenches] = useState<string>("");
   const [numHalls, setNumHalls] = useState<string>("");
-  const [error, setError] = useState<string>("");
+
+  // Error states
+  const [departmentError, setDepartmentError] = useState<string>("");
+  const [benchCapacityError, setBenchCapacityError] = useState<string>("");
+  const [numBenchesError, setNumBenchesError] = useState<string>("");
+  const [numHallsError, setNumHallsError] = useState<string>("");
 
   const handleRoomChange = (newRoom: number) => {
     if (newRoom > roomNumber) {
@@ -58,21 +64,50 @@ function Page2() {
   };
 
   const handleGenerate = () => {
+    let isValid = true;
+
+    // Department validation
+    if (selectedDepartments.length === 0) {
+      setDepartmentError("Please select at least one department.");
+      isValid = false;
+    } else {
+      setDepartmentError("");
+    }
+
+    // Bench capacity validation
     const benchCap = parseInt(benchCapacity);
+    if (benchCapacity.trim() === "" || isNaN(benchCap)) {
+      setBenchCapacityError("Bench capacity is required.");
+      isValid = false;
+    } else if (benchCap !== 2) {
+      setBenchCapacityError("Bench capacity must be exactly 2.");
+      isValid = false;
+    } else {
+      setBenchCapacityError("");
+    }
+
+    // Number of benches validation
     const benches = parseInt(numBenches);
+    if (numBenches.trim() === "" || isNaN(benches) || benches <= 0) {
+      setNumBenchesError("Please enter a valid number of benches.");
+      isValid = false;
+    } else {
+      setNumBenchesError("");
+    }
+
+    // Number of halls validation
     const halls = parseInt(numHalls);
-
-    if (isNaN(benchCap) || benchCap !== 2) {
-      setError("Bench capacity must be exactly 2.");
-      return;
-    }
-    if (benches < 0 || halls < 0) {
-      setError("Benches and halls must be non-negative numbers.");
-      return;
+    if (numHalls.trim() === "" || isNaN(halls) || halls <= 0) {
+      setNumHallsError("Please enter a valid number of halls.");
+      isValid = false;
+    } else {
+      setNumHallsError("");
     }
 
-    setError("");
-    // Additional logic to generate seating can go here
+    if (!isValid) return;
+
+    // All validations passed
+    console.log("Generating seating...");
   };
 
   return (
@@ -93,7 +128,13 @@ function Page2() {
                 onChange={(_, newValue) => setSelectedDepartments(newValue)}
                 sx={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Departments" variant="filled" />
+                  <TextField
+                    {...params}
+                    label="Select Departments"
+                    variant="filled"
+                    error={!!departmentError}
+                    helperText={departmentError}
+                  />
                 )}
               />
             </div>
@@ -109,10 +150,13 @@ function Page2() {
                 variant="filled"
                 value={benchCapacity}
                 onChange={(e) => setBenchCapacity(e.target.value)}
+                error={!!benchCapacityError}
+                helperText={benchCapacityError}
               />
             </div>
           </div>
         </div>
+
         <div className="Flex">
           <div className="Option">
             <div className="SubTopic">
@@ -125,6 +169,8 @@ function Page2() {
                 variant="filled"
                 value={numBenches}
                 onChange={(e) => setNumBenches(e.target.value)}
+                error={!!numBenchesError}
+                helperText={numBenchesError}
               />
             </div>
           </div>
@@ -139,13 +185,17 @@ function Page2() {
                 variant="filled"
                 value={numHalls}
                 onChange={(e) => setNumHalls(e.target.value)}
+                error={!!numHallsError}
+                helperText={numHallsError}
               />
             </div>
           </div>
         </div>
-        {error && <p className="error-message">{error}</p>}
+
         <div className="Action">
-          <Button variant="contained" onClick={handleGenerate}>Generate Seating</Button>
+          <Button variant="contained" onClick={handleGenerate}>
+            Generate Seating
+          </Button>
         </div>
       </div>
 

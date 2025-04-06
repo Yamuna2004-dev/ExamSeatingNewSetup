@@ -1,6 +1,3 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
-
 const Report = sequelize.define('Report', {
     stdname: {
         type: DataTypes.STRING(30),
@@ -9,7 +6,7 @@ const Report = sequelize.define('Report', {
     stdreg: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        primaryKey: true, // Primary Key  
+        primaryKey: true,
         unique: true
     },
     subject: {
@@ -34,36 +31,30 @@ const Report = sequelize.define('Report', {
         allowNull: false
     },
     depid: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'departments', // Foreign Key
-            key: 'dep_id'
+            model: 'departmentconfigs', // Table name in DB (Sequelize pluralizes by default)
+            key: 'id'                  // Must match Departmentconfig primary key
         }
     },
     year: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: true
+        allowNull: false
     }
-}, 
-{
-//     tableName: 'seating_report',
-//     timestamps: false, // No createdAt and updatedAt fields
+}, {
     indexes: [
         {
             unique: false,
-            fields: ['depid'] // Index for department ID
+            fields: ['depid']
         },
         {
             unique: false,
-            fields: ['roomno'] // Index for room number for faster lookup
+            fields: ['roomno']
         },
         {
             unique: false,
-            fields: ['year'] // Index for filtering by academic year
+            fields: ['year']
         }
     ]
 });
-
-module.exports = Report;
