@@ -38,6 +38,10 @@
   .year-filter {
     width: 200px;
   }
+  .dept-filter
+  {
+    width: 200px;
+  }
   
   /* Table Container */
   .table-container {
