@@ -67,13 +67,25 @@ function Page3() {
       setNewDepartmentId("");
       setNewDepartmentName("");
       setError("");
+      axios.get("http://localhost:3000/dept/get")
+      .then((res) => setDepartments(res.data));
     })
+   .catch((err) => {
+    console.log("Error",err.message)
+  })
 
   };
 
   const handleDeleteDepartment = (dep_id: number) => {
-    const updatedDepartments = departments?.filter(dept => dept.dep_id !== dep_id);
-    setDepartments(updatedDepartments);
+    axios.delete(`http://localhost:3000/dept/delete/${dep_id}`)
+      .then(() => {
+        // Refresh department list after delete
+        axios.get("http://localhost:3000/dept/get")
+          .then((res) => setDepartments(res.data));
+      })
+      .catch((err) => {
+        console.error("Delete Error:", err.message);
+      });
   };
 
   return (

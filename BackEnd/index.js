@@ -14,6 +14,7 @@ const Examschedule = require("./app/models/Examschedule");
 const Report = require("./app/models/Report");
 const Cheifexaminer = require("./app/models/Cheifexaminer");
 const Student = require("./app/models/Student");
+const Room = require('./app/models/room');
 
 const app = express();
 const csrfProtection = csrf();

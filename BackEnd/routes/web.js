@@ -3,8 +3,17 @@ const router = express.Router();
 const HomeController = require('../app/controllers/HomeController');
 const AuthController = require('../app/controllers/AuthController');
 const DepartmentController = require("../app/controllers/DepartmentController")
+const RoomController = require('../app/controllers/RoomController');
+
+router.get('/rooms', RoomController.getAllRooms);
+router.post('/rooms', RoomController.createRoom);
+router.delete('/rooms/:roomNumber', RoomController.deleteRoom);
+
 
 router.get('/', HomeController.homePage);
+router.get('/dept/get', DepartmentController.getAllDepartments);
+router.post('/dept/delete', DepartmentController.deleteDepartment);
+router.post('/dept/insert', DepartmentController.createDepartment);
 router.get('/dept/get', DepartmentController.getAllDepartments);
 router.post('/dept/delete', DepartmentController.deleteDepartment);
 router.post('/dept/insert', DepartmentController.createDepartment);

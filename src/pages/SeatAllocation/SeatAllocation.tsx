@@ -1,113 +1,135 @@
-import TextField from "@mui/material/TextField";
 import { useState } from "react";
-import Button from "@mui/material/Button";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Typography, Pagination } from "@mui/material";
+import { TextField, Button, Autocomplete, Typography, Pagination, FormControlLabel, Checkbox } from "@mui/material";
 import "./SeatAllocation.css";
+
+type Student = {
+  regNo: string;
+  dept: string;
+};
+
+type Seat = {
+  seat: string;
+  regNo: string;
+};
 
 function Page2() {
   const departments = ["BBA", "BCA", "BCom", "B.Sc", "BA"];
+  const SEATS_PER_HALL = 30;
+  const SEATS_PER_BENCH = 2;
+  const BENCHES_PER_HALL = SEATS_PER_HALL / SEATS_PER_BENCH;
 
-  const sampleSeats = [
-    [
-      { seat: "A1", regNo: "Reg:22CA0259" }, { seat: "B1", regNo: "Reg:22CA0259" },
-      { seat: "C1", regNo: "Reg:22CA0259" }, { seat: "D1", regNo: "Reg:22CA0259" },
-      { seat: "E1", regNo: "Reg:22CA0259" }, { seat: "F1", regNo: "Reg:22CA0259" }
-    ],
-    [
-      { seat: "A2", regNo: "Reg:22CA02599" }, { seat: "B2", regNo: "Reg:22CA02590" },
-      { seat: "C2", regNo: "" }, { seat: "D2", regNo: "Reg:22CA0259" },
-      { seat: "E2", regNo: "Reg133" }, { seat: "F2", regNo: "Reg:22CA0259" }
-    ],
-    [
-      { seat: "A3", regNo: "Reg:22CA0259" }, { seat: "B3", regNo: "Reg:22CA0259" },
-      { seat: "C3", regNo: "Reg137" }, { seat: "D3", regNo: "Reg:22CA0259" },
-      { seat: "E3", regNo: "Reg139" }, { seat: "F3", regNo: "Reg:22CA0259" }
-    ],
-    [
-      { seat: "A4", regNo: "Reg141" }, { seat: "B4", regNo: "Reg142" },
-      { seat: "C4", regNo: "Reg143" }, { seat: "D4", regNo: "Reg144" },
-      { seat: "E4", regNo: "Reg145" }, { seat: "F4", regNo: "Reg146" }
-    ],
-    [
-      { seat: "A5", regNo: "Reg147" }, { seat: "B5", regNo: "Reg148" },
-      { seat: "C5", regNo: "Reg149" }, { seat: "D5", regNo: "Reg150" },
-      { seat: "E5", regNo: "Reg151" }, { seat: "F5", regNo: "Reg152" }
-    ]
-  ];
-
-  const TOTAL_ROOMS = 15;
-  const [roomNumber, setRoomNumber] = useState<number>(1);
-  const [animationClass, setAnimationClass] = useState<string>("");
-
+  const [roomNumber, setRoomNumber] = useState(1);
+  const [animationClass, setAnimationClass] = useState("");
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-  const [benchCapacity, setBenchCapacity] = useState<string>("");
-  const [numBenches, setNumBenches] = useState<string>("");
-  const [numHalls, setNumHalls] = useState<string>("");
-
-  // Error states
-  const [departmentError, setDepartmentError] = useState<string>("");
-  const [benchCapacityError, setBenchCapacityError] = useState<string>("");
-  const [numBenchesError, setNumBenchesError] = useState<string>("");
-  const [numHallsError, setNumHallsError] = useState<string>("");
+  const [seatData, setSeatData] = useState<Seat[][][][]>([]);
+  const [totalRooms, setTotalRooms] = useState(1);
+  const [useInterval, setUseInterval] = useState(false);
+  const [useOrderWise, setUseOrderWise] = useState(false);
+  const [useRandomWise, setUseRandomWise] = useState(false);
 
   const handleRoomChange = (newRoom: number) => {
-    if (newRoom > roomNumber) {
-      setAnimationClass("swipe-right");
-    } else {
-      setAnimationClass("swipe-left");
-    }
+    setAnimationClass(newRoom > roomNumber ? "swipe-right" : "swipe-left");
     setTimeout(() => {
       setRoomNumber(newRoom);
       setAnimationClass("");
     }, 300);
   };
 
-  const handleGenerate = () => {
-    let isValid = true;
+  const generateStudents = (): Student[] => {
+    const all: Student[] = [];
+    selectedDepartments.forEach((dept) => {
+      for (let i = 1; i <= 20; i++) {
+        all.push({ regNo: `${dept.slice(0, 2).toUpperCase()}${String(i).padStart(4, "0")}`, dept });
+      }
+    });
 
-    // Department validation
-    if (selectedDepartments.length === 0) {
-      setDepartmentError("Please select at least one department.");
-      isValid = false;
-    } else {
-      setDepartmentError("");
+    if (useOrderWise) {
+      return all.sort((a, b) => a.regNo.localeCompare(b.regNo));
     }
 
-    // Bench capacity validation
-    const benchCap = parseInt(benchCapacity);
-    if (benchCapacity.trim() === "" || isNaN(benchCap)) {
-      setBenchCapacityError("Bench capacity is required.");
-      isValid = false;
-    } else if (benchCap !== 2) {
-      setBenchCapacityError("Bench capacity must be exactly 2.");
-      isValid = false;
-    } else {
-      setBenchCapacityError("");
+    if (useRandomWise) {
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
+      }
     }
 
-    // Number of benches validation
-    const benches = parseInt(numBenches);
-    if (numBenches.trim() === "" || isNaN(benches) || benches <= 0) {
-      setNumBenchesError("Please enter a valid number of benches.");
-      isValid = false;
-    } else {
-      setNumBenchesError("");
+    return all;
+  };
+
+  const greedyPairing = (students: Student[]): [Student, Student][] => {
+    const pairs: [Student, Student][] = [];
+    const used = new Array(students.length).fill(false);
+
+    if (selectedDepartments.length === 1) {
+      students.forEach((s) => pairs.push([s, { regNo: "", dept: "" }]));
+      return pairs;
     }
 
-    // Number of halls validation
-    const halls = parseInt(numHalls);
-    if (numHalls.trim() === "" || isNaN(halls) || halls <= 0) {
-      setNumHallsError("Please enter a valid number of halls.");
-      isValid = false;
-    } else {
-      setNumHallsError("");
+    for (let i = 0; i < students.length; i++) {
+      if (used[i]) continue;
+      let paired = false;
+      for (let j = i + 1; j < students.length; j++) {
+        if (!used[j] && students[i].dept !== students[j].dept) {
+          pairs.push([students[i], students[j]]);
+          used[i] = true;
+          used[j] = true;
+          paired = true;
+          break;
+        }
+      }
+      if (!paired) {
+        pairs.push([students[i], { regNo: "", dept: "" }]);
+        used[i] = true;
+      }
     }
 
-    if (!isValid) return;
+    return pairs;
+  };
 
-    // All validations passed
-    console.log("Generating seating...");
+  const allocateSeats = () => {
+    const students = generateStudents();
+    const resultPairs = greedyPairing(students);
+
+    let benchesNeeded = resultPairs.length;
+    if (useInterval) benchesNeeded *= 2;
+
+    const hallsNeeded = Math.ceil(benchesNeeded / BENCHES_PER_HALL);
+    setTotalRooms(hallsNeeded);
+
+    const benchesPerHall: ([Student, Student] | null)[][] = Array.from({ length: hallsNeeded }, () => []);
+    let index = 0;
+
+    for (let r = 0; r < hallsNeeded; r++) {
+      for (let b = 0; b < BENCHES_PER_HALL; b++) {
+        if (useInterval && b % 2 === 1) {
+          benchesPerHall[r].push(null);
+        } else {
+          benchesPerHall[r].push(resultPairs[index++] || null);
+        }
+      }
+    }
+
+    const seatLabels = ["A", "B", "C", "D", "E", "F"];
+    const finalSeats: Seat[][][][] = benchesPerHall.map((hall) => {
+      const room: Seat[][][] = [];
+
+      for (let i = 0; i < hall.length; i++) {
+        const pair = hall[i];
+        const row = Math.floor(i / 3);
+        const col = i % 3;
+
+        const seat1: Seat = { seat: `${seatLabels[col * 2]}${row + 1}`, regNo: pair?.[0].regNo || "" };
+        const seat2: Seat = { seat: `${seatLabels[col * 2 + 1]}${row + 1}`, regNo: pair?.[1].regNo || "" };
+
+        if (!room[row]) room[row] = [];
+        room[row].push([seat1, seat2]);
+      }
+
+      return room;
+    });
+
+    setSeatData(finalSeats);
   };
 
   return (
@@ -116,130 +138,70 @@ function Page2() {
       <div className="UserInputArea">
         <div className="Flex">
           <div className="Option">
-            <div className="SubTopic">
-              <p className="LabelArea">Department</p>
-            </div>
-            <div className="UserArea">
-              <Autocomplete
-                multiple
-                options={departments}
-                getOptionLabel={(option) => option}
-                value={selectedDepartments}
-                onChange={(_, newValue) => setSelectedDepartments(newValue)}
-                sx={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select Departments"
-                    variant="filled"
-                    error={!!departmentError}
-                    helperText={departmentError}
-                  />
-                )}
-              />
-            </div>
+            <p className="LabelArea">Department</p>
+            <Autocomplete
+              multiple
+              options={departments}
+              value={selectedDepartments}
+              onChange={(_, value) => setSelectedDepartments(value)}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Select Departments" variant="filled" />}
+            />
           </div>
           <div className="Option">
-            <div className="SubTopic">
-              <p className="LabelArea">Bench Capacity</p>
-            </div>
-            <div className="UserArea">
-              <TextField
-                id="bench-capacity"
-                type="number"
-                variant="filled"
-                value={benchCapacity}
-                onChange={(e) => setBenchCapacity(e.target.value)}
-                error={!!benchCapacityError}
-                helperText={benchCapacityError}
-              />
-            </div>
+            <p className="LabelArea">Bench Capacity</p>
+            <TextField value="2" disabled variant="filled" />
           </div>
         </div>
 
         <div className="Flex">
+          <FormControlLabel control={<Checkbox checked={useInterval} onChange={(e) => setUseInterval(e.target.checked)} />} label="Interval (Empty Bench)" />
+          <FormControlLabel control={<Checkbox checked={useOrderWise} onChange={(e) => { setUseOrderWise(e.target.checked); setUseRandomWise(false); }} />} label="Order-wise Seating" />
+          <FormControlLabel control={<Checkbox checked={useRandomWise} onChange={(e) => { setUseRandomWise(e.target.checked); setUseOrderWise(false); }} />} label="Random-wise Seating" />
+        </div>
+
+        <div className="Flex">
           <div className="Option">
-            <div className="SubTopic">
-              <p className="LabelArea">No. of Benches</p>
-            </div>
-            <div className="UserArea">
-              <TextField
-                id="num-benches"
-                type="number"
-                variant="filled"
-                value={numBenches}
-                onChange={(e) => setNumBenches(e.target.value)}
-                error={!!numBenchesError}
-                helperText={numBenchesError}
-              />
-            </div>
+            <p className="LabelArea">No. of Benches</p>
+            <TextField value={seatData.length > 0 ? seatData[0].length * 3 : 0} disabled variant="filled" />
           </div>
           <div className="Option">
-            <div className="SubTopic">
-              <p className="LabelArea">No. of Halls</p>
-            </div>
-            <div className="UserArea">
-              <TextField
-                id="num-halls"
-                type="number"
-                variant="filled"
-                value={numHalls}
-                onChange={(e) => setNumHalls(e.target.value)}
-                error={!!numHallsError}
-                helperText={numHallsError}
-              />
-            </div>
+            <p className="LabelArea">No. of Halls</p>
+            <TextField value={totalRooms} disabled variant="filled" />
           </div>
         </div>
 
         <div className="Action">
-          <Button variant="contained" onClick={handleGenerate}>
-            Generate Seating
-          </Button>
+          <Button variant="contained" onClick={allocateSeats}>Generate Seating</Button>
         </div>
       </div>
 
       <div className="report-container">
-        <Typography className="report-heading">
-          Room {roomNumber} - Seating Arrangement
-        </Typography>
-
+        <Typography className="report-heading">Room {roomNumber} - Seating Arrangement</Typography>
         <div className={`seat-grid ${animationClass}`}>
-          {sampleSeats.map((row, rowIndex) => (
+          {seatData[roomNumber - 1]?.map((row, rowIndex) => (
             <div key={rowIndex} className="seat-row">
-              {row.reduce<JSX.Element[]>((acc, _, i) => {
-                if (i % 2 === 0 && row[i + 1]) {
-                  acc.push(
-                    <div className="seat-pair" key={`${rowIndex}-${i}`}>
-                      <div className="seat-card">
-                        <Typography className="seat-number">{row[i].seat}</Typography>
-                        <Typography className="register-number">{row[i].regNo}</Typography>
-                      </div>
-                      <div className="seat-card">
-                        <Typography className="seat-number">{row[i + 1].seat}</Typography>
-                        <Typography className="register-number">{row[i + 1].regNo}</Typography>
-                      </div>
-                    </div>
-                  );
-                }
-                return acc;
-              }, [])}
+              {row.map((bench, colIndex) => (
+                <div className="seat-pair" key={colIndex}>
+                  <div className="seat-card">
+                    <Typography className="seat-number">{bench[0].seat}</Typography>
+                    <Typography className="register-number">{bench[0].regNo}</Typography>
+                  </div>
+                  <div className="seat-card">
+                    <Typography className="seat-number">{bench[1].seat}</Typography>
+                    <Typography className="register-number">{bench[1].regNo}</Typography>
+                  </div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
-
         <div className="pagination-container">
-          <Pagination
-            count={TOTAL_ROOMS}
-            page={roomNumber}
-            onChange={(_, value) => handleRoomChange(value)}
-            color="primary"
-            size="large"
-          />
+          <Pagination count={totalRooms} page={roomNumber} onChange={(_, value) => handleRoomChange(value)} color="primary" size="large" />
         </div>
       </div>
     </div>
   );
 }
 
-export default Page2;
+export default Page2; 

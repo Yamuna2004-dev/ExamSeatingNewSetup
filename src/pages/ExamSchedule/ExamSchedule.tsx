@@ -24,13 +24,39 @@ type ErrorType = {
 
 function ExamSchedule() {
   const [selectedYear, setSelectedYear] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [rows, setRows] = useState<ExamRow[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState<ErrorType[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
+  const handleChangeYear = (event: SelectChangeEvent<string>) => {
     setSelectedYear(event.target.value);
+  };
+
+  const handleChangeDepartment = (event: SelectChangeEvent<string>) => {
+    setSelectedDepartment(event.target.value);
+  };
+
+  const handleDownload = () => {
+    if (rows.length === 0) {
+      alert("No data available to download.");
+      return;
+    }
+
+    const worksheetData = rows.map(row => ({
+      "Year": row.year,
+      "Department": row.department,
+      "Date": row.date,
+      "Subject Title": row.subjectTitle,
+      "Subject Code": row.subjectCode,
+      "Session": row.session
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Exam Schedule");
+    XLSX.writeFile(workbook, "exam_schedule.xlsx");
   };
 
   const handleAddRow = () => {
@@ -123,7 +149,6 @@ function ExamSchedule() {
 
       setRows([...rows, ...importedRows]);
       setErrors([...errors, ...Array(importedRows.length).fill({})]);
-
       alert("File imported successfully!");
     };
     reader.readAsArrayBuffer(file);
@@ -139,16 +164,27 @@ function ExamSchedule() {
       <div className="top-actions">
         <FormControl className="year-filter">
           <InputLabel>Filter by Year</InputLabel>
-          <Select value={selectedYear} onChange={handleChange}>
-            <MenuItem value="All Years">All Years</MenuItem>
+          <Select value={selectedYear} onChange={handleChangeYear}>
+            <MenuItem value="">All Years</MenuItem>
             <MenuItem value="I Year">I Year</MenuItem>
             <MenuItem value="II Year">II Year</MenuItem>
             <MenuItem value="III Year">III Year</MenuItem>
           </Select>
         </FormControl>
-        <IconButton color="primary" aria-label="import schedule" onClick={handleImportClick}>
-          <SaveAlt />
-        </IconButton>
+
+        <FormControl className="dept-filter">
+          <InputLabel>Filter by Department</InputLabel>
+          <Select value={selectedDepartment} onChange={handleChangeDepartment}>
+            <MenuItem value="">All Departments</MenuItem>
+            <MenuItem value="BCA">BCA</MenuItem>
+            <MenuItem value="BCom">BCom</MenuItem>
+            <MenuItem value="BA">BA</MenuItem>
+            <MenuItem value="BSc">BSc</MenuItem>
+            <MenuItem value="BBA">BBA</MenuItem>
+          </Select>
+        </FormControl>
+
+        <IconButton color="primary" onClick={handleImportClick}><SaveAlt /></IconButton>
         <input
           type="file"
           accept=".xlsx, .xls"
@@ -173,28 +209,33 @@ function ExamSchedule() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => (
-                <TableRow key={index}>
-                  {Object.keys(row).map((key) => (
-                    <TableCell key={key}>
-                      {editIndex === index ? (
-                        <TextField
-                          error={!!errors[index]?.[key as keyof ExamRow]}
-                          helperText={errors[index]?.[key as keyof ExamRow] || ""}
-                          value={row[key as keyof ExamRow]}
-                          onChange={(e) => handleInputChange(index, key as keyof ExamRow, e.target.value)}
-                        />
-                      ) : (
-                        row[key as keyof ExamRow]
-                      )}
+              {rows
+                .filter(row =>
+                  (selectedYear === "" || row.year === selectedYear) &&
+                  (selectedDepartment === "" || row.department === selectedDepartment)
+                )
+                .map((row, index) => (
+                  <TableRow key={index}>
+                    {Object.keys(row).map((key) => (
+                      <TableCell key={key}>
+                        {editIndex === index ? (
+                          <TextField
+                            error={!!errors[index]?.[key as keyof ExamRow]}
+                            helperText={errors[index]?.[key as keyof ExamRow] || ""}
+                            value={row[key as keyof ExamRow]}
+                            onChange={(e) => handleInputChange(index, key as keyof ExamRow, e.target.value)}
+                          />
+                        ) : (
+                          row[key as keyof ExamRow]
+                        )}
+                      </TableCell>
+                    ))}
+                    <TableCell>
+                      <IconButton color="secondary" onClick={() => handleEditRow(index)}><Edit /></IconButton>
+                      <IconButton color="error" onClick={() => handleDeleteRow(index)}><Delete /></IconButton>
                     </TableCell>
-                  ))}
-                  <TableCell>
-                    <IconButton color="secondary" onClick={() => handleEditRow(index)}><Edit /></IconButton>
-                    <IconButton color="error" onClick={() => handleDeleteRow(index)}><Delete /></IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -205,7 +246,7 @@ function ExamSchedule() {
           <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAddRow}>Add Exam Schedule</Button>
           <Button variant="contained" color="info" startIcon={<Save />} onClick={handleSave}>Save</Button>
           <Button variant="contained" color="success" startIcon={<Publish />}>Publish</Button>
-          <Button variant="contained" color="warning" startIcon={<Download />}>Download</Button>
+          <Button variant="contained" color="warning" startIcon={<Download />} onClick={handleDownload}>Download</Button>
         </Stack>
       </div>
     </div>

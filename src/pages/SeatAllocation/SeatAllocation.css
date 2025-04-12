@@ -145,6 +145,24 @@ p {
   transition: transform 0.2s ease-in-out;
 }
 
+/* Add background color per department */
+.seat-card.bba {
+  background-color: #fdd835; /* Yellow */
+}
+.seat-card.bca {
+  background-color: #81d4fa; /* Light Blue */
+}
+.seat-card.bcom {
+  background-color: #a5d6a7; /* Light Green */
+}
+.seat-card.bsc {
+  background-color: #ce93d8; /* Light Purple */
+}
+.seat-card.ba {
+  background-color: #ffab91; /* Peach */
+}
+
+
 .seat-card:hover {
   transform: scale(1.05);
 }
