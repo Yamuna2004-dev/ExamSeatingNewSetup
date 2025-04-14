@@ -35,7 +35,6 @@ const Signin: React.FC = () => {
       setErrorMessage("Enter a valid email address.");
       return;
     }
-
     // Dummy credentials check – replace with real authentication
     if (email !== "admin@example.com" || password !== "admin123") {
       setErrorMessage("Invalid email or password.");

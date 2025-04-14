@@ -1,6 +1,6 @@
 // backend/controllers/examScheduleController.js
 
-const ExamSchedule = require('../../models/ExamSchedule'); // Import the model
+const ExamSchedule = require('../models/Examschedule'); // Import the model
 
 // Create a new exam schedule (Insert)
 exports.createExamSchedule = async (req, res) => {

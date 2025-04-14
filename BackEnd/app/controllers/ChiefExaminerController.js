@@ -1,4 +1,4 @@
-const ChiefExaminer = require('../../models/ChiefExaminer');
+const ChiefExaminer = require('../models/Cheifexaminer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 

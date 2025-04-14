@@ -33,6 +33,7 @@ app.use(cors({
 	credentials: true
   }));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')));
 
 // required for csurf
@@ -47,12 +48,12 @@ app.use(session({
     }),
 }));
 
-app.use(csrfProtection);
+// app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
 	res.locals.isAuthenticated = req.session.isLoggedIn;
-	res.locals.csrfToken = req.csrfToken();
+	// res.locals.csrfToken = req.csrfToken();
 	next();
 });
 

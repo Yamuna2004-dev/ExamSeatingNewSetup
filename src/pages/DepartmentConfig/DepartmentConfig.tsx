@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {SetStateAction, useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   TextField, Button, Typography, Stack, IconButton, Alert
@@ -14,11 +14,10 @@ function Page3() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/dept/get").then((res) => {
+    axios.get("http://localhost:3000/dept/get").then((res: { data: SetStateAction<{ dep_id: number; dep_name: string; }[] | undefined>; }) => {
       setDepartments(res.data)
       console.log("res.data",res.data)
-      debugger;
-    }).catch((err) => {
+    }).catch((err: { message: unknown; }) => {
       console.log("Error",err.message)
     })
   }, [])
@@ -68,9 +67,9 @@ function Page3() {
       setNewDepartmentName("");
       setError("");
       axios.get("http://localhost:3000/dept/get")
-      .then((res) => setDepartments(res.data));
+      .then((res: { data: SetStateAction<{ dep_id: number; dep_name: string; }[] | undefined>; }) => setDepartments(res.data));
     })
-   .catch((err) => {
+   .catch((err: { message: unknown; }) => {
     console.log("Error",err.message)
   })
 
@@ -81,9 +80,9 @@ function Page3() {
       .then(() => {
         // Refresh department list after delete
         axios.get("http://localhost:3000/dept/get")
-          .then((res) => setDepartments(res.data));
+          .then((res: { data: SetStateAction<{ dep_id: number; dep_name: string; }[] | undefined>; }) => setDepartments(res.data));
       })
-      .catch((err) => {
+      .catch((err: { message: unknown; }) => {
         console.error("Delete Error:", err.message);
       });
   };

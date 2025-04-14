@@ -24,11 +24,11 @@ router.post('/seat-allocation', SeatAllocationController.create);
 router.put('/seat-allocation/:stdreg', SeatAllocationController.update);
 router.delete('/seat-allocation/:stdreg', SeatAllocationController.delete);
 // Exam Schedule Routes
-router.get('/exam-schedule', ExamScheduleController.getAll);
-router.get('/exam-schedule/:subname', ExamScheduleController.getById);
-router.post('/exam-schedule', ExamScheduleController.create);
-router.put('/exam-schedule/:subname', ExamScheduleController.update);
-router.delete('/exam-schedule/:subname', ExamScheduleController.delete);
+router.get('/exam-schedule', ExamScheduleController.getExamSchedules);
+// router.get('/exam-schedule/:subname', ExamScheduleController.getById);
+router.post('/exam-schedule', ExamScheduleController.createExamSchedule);
+router.put('/exam-schedule/:subname', ExamScheduleController.updateExamSchedule);
+router.delete('/exam-schedule/:subname', ExamScheduleController.deleteExamSchedule);
 // Chief Examiner Routes
 router.get('/chief-examiners', ChiefExaminerController.getAll);
 router.get('/chief-examiners/:email', ChiefExaminerController.getByEmail);

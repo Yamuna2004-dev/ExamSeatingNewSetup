@@ -1,4 +1,4 @@
-const Report = require('../../models/Report');
+const Report = require('../models/Report');
 
 // 🔹 Get all allocated seats
 exports.getAll = async (req, res) => {
