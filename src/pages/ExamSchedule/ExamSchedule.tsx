@@ -8,6 +8,7 @@ import { SaveAlt, Add, Edit, Delete, Publish, Save, Download } from "@mui/icons-
 import { SelectChangeEvent } from "@mui/material";
 import * as XLSX from 'xlsx';
 import "./ExamSchedule.css";
+import axios from 'axios';
 
 interface ExamRow {
   year: string;
@@ -29,6 +30,110 @@ function ExamSchedule() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState<ErrorType[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
+  
+const ExamSchedule = () => {
+  const [examSchedules, setExamSchedules] = useState<any[]>([]);
+  const [newExamYear, setNewExamYear] = useState("");
+  const [newExamDepartment, setNewExamDepartment] = useState("");
+  const [newExamSubject, setNewExamSubject] = useState("");
+  const [newExamDate, setNewExamDate] = useState("");
+  const [newExamSession, setNewExamSession] = useState("");
+  const [newExamCode, setNewExamCode] = useState("");
+  const [error, setError] = useState("");
+  
+  useEffect(() => {
+    axios.get("http://localhost:3000/exam-schedule/get")
+      .then((res) => {
+        setExamSchedules(res.data);
+      })
+      .catch((err) => {
+        console.log("Error fetching schedules:", err.message);
+      });
+  }, []);
+
+  const handleAddExamSchedule = () => {
+    const trimmedYear = newExamYear.trim();
+    const trimmedDepartment = newExamDepartment.trim();
+    const trimmedSubject = newExamSubject.trim();
+    const trimmedDate = newExamDate.trim();
+    const trimmedSession = newExamSession.trim();
+    const trimmedCode = newExamCode.trim();
+  
+    // Validation: Empty Fields
+    if (!trimmedYear || !trimmedDepartment || !trimmedSubject || !trimmedDate || !trimmedSession || !trimmedCode) {
+      setError("All fields are required.");
+      return;
+    }
+  
+    // Validation: Check if Date is valid
+    const parsedDate = Date.parse(trimmedDate);
+    if (isNaN(parsedDate)) {
+      setError("Invalid date format.");
+      return;
+    }
+  
+    // Validation: Duplicate Subject Code
+    const codeExists = examSchedules.some((schedule) => schedule.subjectCode === trimmedCode);
+    if (codeExists) {
+      setError("This Subject Code already exists.");
+      return;
+    }
+  
+    // If validation passes, make API call to insert the new schedule
+    const newSchedule = {
+      year: trimmedYear,
+      department: trimmedDepartment,
+      date: trimmedDate,
+      subjectTitle: trimmedSubject,
+      subjectCode: trimmedCode,
+      session: trimmedSession
+    };
+  
+    axios.post("http://localhost:3000/exam-schedule/insert", newSchedule) // API to insert exam schedule
+      .then(() => {
+        setNewExamYear("");
+        setNewExamDepartment("");
+        setNewExamSubject("");
+        setNewExamDate("");
+        setNewExamSession("");
+        setNewExamCode("");
+        setError("");
+  
+        // Refresh the schedule list
+        axios.get("http://localhost:3000/exam-schedule/get")
+          .then((res) => setExamSchedules(res.data));
+      })
+      .catch((err) => {
+        console.log("Error adding schedule", err.message);
+      });
+  };
+
+  const handleEditExamSchedule = (examCode: string, updatedSchedule: any) => {
+    axios.put(`http://localhost:3000/exam-schedule/update/${examCode}`, updatedSchedule)
+      .then(() => {
+        alert("Exam Schedule updated successfully!");
+        // Refresh the schedule list
+        axios.get("http://localhost:3000/exam-schedule/get")
+          .then((res) => setExamSchedules(res.data));
+      })
+      .catch((err) => {
+        console.log("Error updating schedule", err.message);
+      });
+  };
+  
+  const handleDeleteExamSchedule = (examCode: string) => {
+    axios.delete(`http://localhost:3000/exam-schedule/delete/${examCode}`) // API to delete the schedule by subject code
+      .then(() => {
+        // Refresh the schedule list after delete
+        axios.get("http://localhost:3000/exam-schedule/get")
+          .then((res) => setExamSchedules(res.data));
+      })
+      .catch((err) => {
+        console.error("Error deleting schedule", err.message);
+      });
+  };
+  
 
   const handleChangeYear = (event: SelectChangeEvent<string>) => {
     setSelectedYear(event.target.value);

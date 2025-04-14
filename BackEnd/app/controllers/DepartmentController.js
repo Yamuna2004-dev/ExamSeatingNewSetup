@@ -1,47 +1,33 @@
-const Department = require("../models/Departmentconfig");
+const Department = require('../models/Department');
 
+// Get all
 exports.getAllDepartments = async (req, res) => {
   try {
-    const departments = await Department.findAll();
-    res.json(departments);
+    const result = await Department.findAll();
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch departments." });
+    res.status(500).json({ error: 'Failed to fetch departments' });
   }
 };
 
-exports.createDepartment = async (req, res) => {
-  const { id, name } = req.body;
+// Add
+exports.addDepartment = async (req, res) => {
   try {
-    const newDept = await Department.create({ id, name });
+    const { dep_id, dep_name } = req.body;
+    const newDept = await Department.create({ dep_id, dep_name });
     res.status(201).json(newDept);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create department." });
+    res.status(400).json({ error: 'Failed to add department' });
   }
 };
 
-exports.updateDepartment = async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
-  try {
-    const dept = await Department.findByPk(id);
-    if (!dept) return res.status(404).json({ error: "Department not found." });
-
-    dept.name = name;
-    await dept.save();
-    res.json(dept);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update department." });
-  }
-};
-
+// Delete
 exports.deleteDepartment = async (req, res) => {
-  const { id } = req.params;
   try {
-    const deleted = await Department.destroy({ where: { id } });
-    if (!deleted) return res.status(404).json({ error: "Not found." });
-
-    res.json({ message: "Deleted successfully" });
+    const id = req.params.id;
+    await Department.destroy({ where: { dep_id: id } });
+    res.status(200).json({ message: 'Deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete." });
+    res.status(400).json({ error: 'Failed to delete department' });
   }
 };

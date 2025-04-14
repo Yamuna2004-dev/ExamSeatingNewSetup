@@ -45,6 +45,7 @@ function Page2() {
   const [useInterval, setUseInterval] = useState(false);
   const [useOrderWise, setUseOrderWise] = useState(false);
   const [useRandomWise, setUseRandomWise] = useState(false);
+  
 
 
   const handleRoomChange = (newRoom: number) => {
@@ -110,8 +111,10 @@ function Page2() {
   };
   
   const generateStudents = (): Student[] => {
+
     const all: Student[] = [];
     selectedDepartments.forEach((dept) => {
+      
       const prefix = deptCodeMap[dept];
       for (let i = 1; i <= 20; i++) {
         const regNo = `${prefix}02${String(i).padStart(2, "0")}`;
@@ -254,7 +257,8 @@ function Page2() {
               value={selectedDepartments}
               onChange={(_, value) => setSelectedDepartments(value)}
               sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Select Departments" variant="filled" />}
+              renderInput={(params) => <TextField {...params} label="Select Departments" variant="filled"  required 
+              helperText={ "Please select at least one department" }/>}
             />
           </div>
           <div className="Option">
