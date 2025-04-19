@@ -1,6 +1,4 @@
 const ChiefExaminer = require('../models/Cheifexaminer');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 //  Get all chief examiners
 exports.getAll = async (req, res) => {

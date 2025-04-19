@@ -5,14 +5,18 @@ import {
   TableHead, TableRow, Paper, Select, MenuItem, 
   FormControl, InputLabel, Typography, Box 
 } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
+
 import "./StudentSchedule.css";
 
 export default function StudentSchedule() {
   const [selectedYear, setSelectedYear] = useState("");
 
-  const handleChange = (event) => {
+ 
+  const handleChange = (event: SelectChangeEvent) => {
     setSelectedYear(event.target.value);
   };
+  
 
   return (
     <div className="exam-schedule-container">

@@ -42,6 +42,18 @@ const routes: Routes = [
     icon: PendingActionsIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/StudentSchedule')),
+    path: '/StudentSchedule',
+    title: 'Student Schedule',
+    
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/StudentView')),
+    path: '/StudentView',
+    title: 'Student View',
+    
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/NotFound')),
     path: '*',
   },

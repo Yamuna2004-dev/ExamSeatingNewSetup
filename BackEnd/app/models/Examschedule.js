@@ -6,7 +6,13 @@ const Examschedule = sequelize.define('examschedule', {
     depid: {
         type: DataTypes.STRING(10),
         allowNull: false
+        
     },
+    depname: {
+        type: DataTypes.STRING(40),
+        allowNull: false
+    },
+
     subname: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -15,10 +21,10 @@ const Examschedule = sequelize.define('examschedule', {
     },
     semester: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     date: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING(20),
         allowNull: false
     },
     session: {
@@ -31,10 +37,8 @@ const Examschedule = sequelize.define('examschedule', {
         unique: true
     },
     year: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(10),
         allowNull: false,
-        unique: true,
-        primaryKey: true 
     }
 }, {
     // tableName: 'exam_schedule', 

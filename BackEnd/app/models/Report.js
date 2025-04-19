@@ -1,62 +1,42 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Report = sequelize.define('Report', {
-    stdname: {
+
+const report = sequelize.define('report',{
+    bench_capacity: {
         type: DataTypes.STRING(30),
         allowNull: false
     },
-    stdreg: {
-        type: DataTypes.STRING(10),
-        allowNull: false,
-        primaryKey: true,
-        unique: true
-    },
-    subject: {
-        type: DataTypes.STRING(40),
+    Interval: {
+        type: DataTypes.STRING(30),
         allowNull: false
     },
-    subcode: {
-        type: DataTypes.STRING(10),
-        allowNull: false,
-        unique: true
-    },
-    roomno: {
-        type: DataTypes.INTEGER,
+    order_wise: {
+        type: DataTypes.STRING(30),
         allowNull: false
     },
-    seatno: {
-        type: DataTypes.STRING(10),
+    random_wise: {
+        type: DataTypes.STRING(30),
+        allowNull: false
+    },
+    no_bench: {
+        type: DataTypes.STRING(30),
+        allowNull: false
+    },
+    no_halls: {
+        type: DataTypes.STRING(30),
         allowNull: false
     },
     depname: {
         type: DataTypes.STRING(40),
         allowNull: false
     },
-    depid: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        // references: {
-        //     model: 'departmentconfigs', // Table name in DB (Sequelize pluralizes by default)
-        //     key: 'id'                  // Must match Departmentconfig primary key
-        // }
-    },
-    year: {
-        type: DataTypes.INTEGER,
+   
+   exam_name: {
+        type: DataTypes.STRING(40),
         allowNull: false
+    },
+    publish: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     }
-}, {
-    indexes: [
-        {
-            unique: false,
-            fields: ['depid']
-        },
-        {
-            unique: false,
-            fields: ['roomno']
-        },
-        {
-            unique: false,
-            fields: ['year']
-        }
-    ]
-});
+}, );

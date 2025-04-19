@@ -14,14 +14,14 @@ import { useNavigate } from 'react-router-dom';
 const Signup: React.FC = () => {
   const navigate = useNavigate();
 
-  // ✅ State variables for form fields
+  //  State variables for form fields
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  // ✅ Form submit handler
+  //  Form submit handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -135,7 +135,7 @@ const Signup: React.FC = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          {/* ✅ Show error message if any */}
+          {/* Show error message if any */}
           {errorMessage && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {errorMessage}

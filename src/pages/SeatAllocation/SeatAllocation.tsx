@@ -1,4 +1,5 @@
-import { useState } from "react";
+import  {SetStateAction, useEffect, useState } from "react";
+import axios from "axios";
 import {
   TextField,
   Button,
@@ -9,18 +10,25 @@ import {
   Checkbox
 } from "@mui/material";
 import * as XLSX from 'xlsx';
-
+import {
+  Download, Save
+} from "@mui/icons-material";
 import "./SeatAllocation.css";
 
 type Student = {
   regNo: string;
-  dept: string;
+  dept: string; // This must be a string like "BCA", "B.Com", etc.
 };
+
 
 type Seat = {
   seat: string;
   regNo: string;
   dept: string;
+};
+type Department = {
+  dep_id: number;
+  dep_name: string;
 };
 
 const deptCodeMap: Record<string, string> = {
@@ -32,22 +40,52 @@ const deptCodeMap: Record<string, string> = {
 };
 
 function Page2() {
-  const departments = ["BBA", "BCA", "BCom", "B.Sc", "BA"];
+  // const departments = ["BBA", "BCA", "BCom", "B.Sc", "BA"];
   const SEATS_PER_HALL = 30;
   const SEATS_PER_BENCH = 2;
   const BENCHES_PER_HALL = SEATS_PER_HALL / SEATS_PER_BENCH;
 
   const [roomNumber, setRoomNumber] = useState(1);
   const [animationClass, setAnimationClass] = useState("");
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+
   const [seatData, setSeatData] = useState<Seat[][][][]>([]);
   const [totalRooms, setTotalRooms] = useState(1);
   const [useInterval, setUseInterval] = useState(false);
   const [useOrderWise, setUseOrderWise] = useState(false);
   const [useRandomWise, setUseRandomWise] = useState(false);
+
+  const [departments, setDepartments] = useState<Department[]>([]);
+  // State to store selected departments
+  const [selectedDepartments, setSelectedDepartments] = useState<Department[]>([]);
+
+  // Fetch departments from the backend API
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/dept/get").then((res: { data: SetStateAction<{ dep_name: string; }[] | undefined>; }) => {
+            setDepartments(((res.data as { dep_name: string }[]) || []).map((dept: { dep_name: string }, index: number) => ({ dep_id: index + 1, dep_name: dept.dep_name }))) // Assign default dep_id if missing
+        console.log("Departments fetched:", res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching departments:", err.message);
+      });
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const payload = {
+        data: seatData, // This is the full 4D array of seats
+        departments: selectedDepartments.map(dep => dep.dep_name),
+      };
   
-
-
+      const res = await axios.post("http://localhost:3000/seating/save", payload);
+      console.log("Saved successfully", res.data);
+      alert("Seating arrangement saved to database successfully.");
+    } catch (err) {
+      console.error("Error saving seating arrangement:", err);
+      alert("Failed to save seating data. Please try again.");
+    }
+  };
+  
   const handleRoomChange = (newRoom: number) => {
     setAnimationClass(newRoom > roomNumber ? "swipe-right" : "swipe-left");
     setTimeout(() => {
@@ -111,14 +149,13 @@ function Page2() {
   };
   
   const generateStudents = (): Student[] => {
-
     const all: Student[] = [];
+  
     selectedDepartments.forEach((dept) => {
-      
-      const prefix = deptCodeMap[dept];
+      const prefix = deptCodeMap[dept.dep_name]; // Use dept name
       for (let i = 1; i <= 20; i++) {
         const regNo = `${prefix}02${String(i).padStart(2, "0")}`;
-        all.push({ regNo, dept });
+        all.push({ regNo, dept: dept.dep_name }); // Only assign dep_name as string
       }
     });
 
@@ -239,7 +276,7 @@ function Page2() {
       case "BCom": return "#D6E4FF";
       case "BA": return "#FFD6E7";
       case "B.Sc": return "#E3D6FF";
-      default: return "#EEE";
+      default: return "#cfcfcf";
     }
   };
   
@@ -249,18 +286,26 @@ function Page2() {
       <h3 className="Heading">SEAT ALLOCATION</h3>
       <div className="UserInputArea">
         <div className="Flex">
-          <div className="Option">
-            <p className="LabelArea">Department</p>
-            <Autocomplete
-              multiple
-              options={departments}
-              value={selectedDepartments}
-              onChange={(_, value) => setSelectedDepartments(value)}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Select Departments" variant="filled"  required 
-              helperText={ "Please select at least one department" }/>}
-            />
-          </div>
+        <div className="LabelArea">
+      <p className="LabelArea">Department</p>
+      <Autocomplete
+        multiple
+        options={departments}
+        getOptionLabel={(option) => option.dep_name}
+        value={selectedDepartments}
+        onChange={(_, value) => setSelectedDepartments(value)}
+        sx={{ width: 300 }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Select Departments"
+            variant="filled"
+            required
+            helperText="Please select at least one department"
+          />
+        )}
+      />
+    </div>
           <div className="Option">
             <p className="LabelArea">Bench Capacity</p>
             <TextField value="2" disabled variant="filled" />
@@ -283,7 +328,15 @@ function Page2() {
             <TextField value={totalRooms} disabled variant="filled" />
           </div>
         </div>
-
+        <div className="A">
+        <p className="LabelArea">Exam Name </p>
+        <TextField
+                  label="Name of The Exam "
+                  name=""
+                  variant="outlined"
+                  className="exam-name-input"required
+                />
+        </div>
         <div className="Action">
           <Button variant="contained" onClick={allocateSeats}>Generate Seating</Button>
         </div>
@@ -312,13 +365,20 @@ function Page2() {
           <Pagination count={totalRooms} page={roomNumber} onChange={(_, value) => handleRoomChange(value)} color="primary" size="large" />
         </div>
         <div className="Action">
-        <Button variant="outlined" onClick={generateAttendanceReport} style={{ marginLeft: '10px' }}>
-            Download Attendance Report
-        </Button>
-        </div>
+  <Button 
+    variant="contained" color="warning" onClick={generateAttendanceReport} style={{ marginRight: '10px' }} startIcon={<Download />}
+  >
+    Download Attendance Report
+  </Button>
+
+  <Button 
+    variant="contained" color="success" onClick={handleSave} startIcon={<Save />}>Save
+  </Button>
+</div>
       </div>
     </div>
   );
 }
 
 export default Page2;
+//  

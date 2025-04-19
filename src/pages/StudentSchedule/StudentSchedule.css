@@ -1,0 +1,75 @@
+.exam-schedule-container {
+  background-color: #e3f2fd; /* Light blue background */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.college-title {
+  font-weight: bold;
+  color: #0d47a1; /* Dark blue */
+}
+
+.h2title {
+  color: #1565c0; /* Mid-tone blue */
+  margin-bottom: 0.5rem;
+}
+
+.exam-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e88e5;
+}
+
+.exam-table {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  height: 400px;
+  width: 1300px;
+}
+
+.table-header {
+  background-color: #bbdefb; /* Light header blue */
+}
+
+/* Table Row Styling */
+.table-row {
+  text-align: center;
+  font-size: 14px !important;
+  color: #2c3e50;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Alternating Row Colors */
+.table-row:nth-child(even) {
+  background-color: #e8e9eb;
+}
+
+/* Responsive Design for small screens */
+@media (max-width: 768px) {
+  .MuiBox-root {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .exam-title,
+  .college-title,
+  .h2title {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .exam-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table-header b,
+  .table-row td {
+    font-size: 12px !important;
+  }
+}
